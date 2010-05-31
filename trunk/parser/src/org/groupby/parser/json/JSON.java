@@ -44,7 +44,6 @@ import org.groupby.parser.json.JSONString;
  * This is our free implementation of JSON format.</p>
  * <p>Here below this is the BNF : <br />
  *
- * #SME add number -+ ^
  * 
  * jsonarray<br />
  *     = '[' jsonobject ',' jsonarray-list ']'<br />
@@ -135,7 +134,7 @@ public abstract class JSON {
     public static int ascii = 0;
 
     /**
-     * Parse an input stream, and build a JSON object from an input string.
+     * Parse an input stream and build a JSON object.
      * <p>
      * If the string is empty, the method returns null.<br />
      * To recursively output objects, use toString().
@@ -155,7 +154,7 @@ public abstract class JSON {
         clear();
         input = src;
         length = input.length();
-        while (k < length) {
+        while (true) {
             c = input.charAt(k);
             // initial switch
             //  JSON object
@@ -175,11 +174,9 @@ public abstract class JSON {
                 if((int) c > 32) {
                     throw new JSONParsingException("Invalid input JSON string. Expected character: " + OPEN_BRACKET + OPEN_BRACE + " found: " + c, k);
                 }
+                k++;
             }
-            k++;
         }
-        return null;
-
     }
 
     /**

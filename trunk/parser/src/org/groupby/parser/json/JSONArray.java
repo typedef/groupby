@@ -68,7 +68,7 @@ public class JSONArray extends JSON {
     }
 
     /**
-     * Read a chunk of the input string, matches JSON Array rules.
+     * Read a chunk of the input string, match JSON Array rules.
      * <p>
      * The input string, held by the String object "input" variable is shared
      * by all JSON subclasses (static). Note that the index of parsing is also
@@ -114,14 +114,92 @@ public class JSONArray extends JSON {
         items.add(o);
     }
 
+
      /**
-     * Get an item from JSON Object
+     * Get an Object with the index
      *
-     * @return the Object held
+     * @param i The index
+     * @return the Object linked to the key name. Null value possibly returned.
      */
     public final Object get(int i) {
         return items.get(i);
     }
+
+     /**
+     * Get an JSONObject with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Null value possibly returned.
+     */
+    public final JSONObject getJSONObject(int i) {
+        return (JSONObject) items.get(i);
+    }
+
+     /**
+     * Get an JSONObject with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Null value possibly returned.
+     */
+    public final JSONArray getJSONArray(int i) {
+        return (JSONArray) items.get(i);
+    }
+
+     /**
+     * Get a Boolean with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Never returns null.
+     */
+    public final Boolean getBoolean(int i) {
+        Boolean b = (Boolean) items.get(i);
+        return (b == null ? false : b);
+    }
+
+     /**
+     * Get a Integer with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Never returns null.
+     */
+    public final Integer getInt(int i) {
+        Object o = items.get(i);
+        return (o == null ? 0 : (Integer) o);
+    }
+
+     /**
+     * Get a Double with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Never returns null.
+     */
+    public final Double getDouble(int i) {
+        Object o = items.get(i);
+        return (o == null ? 0D : (Double) o);
+    }
+
+     /**
+     * Get a Long with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Never returns null.
+     */    
+    public final Long getLong(int i) {
+        Object o = items.get(i);
+        return (o == null ? 0L : (Long) o);
+    }
+
+     /**
+     * Get a String with the index
+     *
+     * @param i The index
+     * @return the Object linked to the key name. Never returns null.
+     */
+    public final String getString(int i) {
+        Object o = items.get(i);
+        return (o == null ? "" : (String) o);
+    }
+
 
     @Override
     public void toBuffer(StringBuffer s) {

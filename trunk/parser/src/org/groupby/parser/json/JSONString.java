@@ -75,7 +75,7 @@ public class JSONString extends JSON {
      * shared by all JSON child classes.
      * If the string is empty, the method returns null.<br />
      * </p>
-     * @return a JSON Attribute representing a part of the input string.
+     * @return a JSON String.
      * @throws JSONParsingException if the string is not correctly wrote.
      * @see #parse(java.lang.String src)
      */

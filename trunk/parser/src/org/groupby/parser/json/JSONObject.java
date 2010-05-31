@@ -40,7 +40,7 @@ import org.groupby.parser.JSON.JSON;
  * <b>JSONObject</b> class
  *
  * <p>JSONObject class<br />
- * This class hold the JSON Array implementation.
+ * This class holds the JSON Object implementation.
  *
  * </p>
  *
@@ -80,7 +80,7 @@ public class JSONObject extends JSON {
     }
 
     /**
-     * Read a chunk of the input string, matches JSON Object rules.
+     * Read a chunk of the input string, match JSON Object rules.
      * <p>
      * The input string, held by the String object "input" variable is shared
      * by all JSON subclasses (static). Note that the index of parsing is also
@@ -141,13 +141,34 @@ public class JSONObject extends JSON {
     }
 
      /**
+     * Get an JSONObject with the index
+     *
+     * @param name The key string
+     * @return the Object linked to the key name. Null value possibly returned.
+     */
+    public final JSONObject getJSONObject(String name) {
+        return (JSONObject) items.get(name);
+    }
+
+     /**
+     * Get an JSONObject with the index
+     *
+     * @param name The key string
+     * @return the Object linked to the key name. Null value possibly returned.
+     */
+    public final JSONArray getJSONArray(String name) {
+        return (JSONArray) items.get(name);
+    }
+
+     /**
      * Get a Boolean with the key name
      *
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
-    public final boolean getBoolean(String name) {
-        return (items.get(name) == null ? false : Boolean.parseBoolean((String) items.get(name)));
+    public final Boolean getBoolean(String name) {
+        Boolean b = (Boolean) items.get(name);
+        return (b == null ? false : b);
     }
 
      /**
@@ -157,10 +178,8 @@ public class JSONObject extends JSON {
      * @return the Object linked to the key name. Never returns null.
      */
     public final Integer getInt(String name) {
-        if (items.get(name) == null)
-            return 0;
-        else 
-            return Integer.valueOf(items.get(name).toString());
+        Object o = items.get(name);
+        return (o == null ? 0 : (Integer) o);
     }
 
       /**
@@ -170,36 +189,30 @@ public class JSONObject extends JSON {
      * @return the Object linked to the key name. Never returns null.
      */
     public final Double getDouble(String name) {
-        if (items.get(name) == null)
-            return 0D;
-        else
-            return Double.valueOf(items.get(name).toString());
+        Object o = items.get(name);
+        return (o == null ? 0D : (Double) o);
     }
 
      /**
-     * Get an Integer with the key name
+     * Get an Long with the key name
      *
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
     public final Long getLong(String name) {
-        if (items.get(name) == null)
-            return 0L;
-        else
-            return Long.valueOf(items.get(name).toString());
+        Object o = items.get(name);
+        return (o == null ? 0L : (Long) o);
     }
 
      /**
-     * Get a Boolean with the key name
+     * Get a String with the key name
      *
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
     public final String getString(String name) {
-        if (items.get(name) == null)
-            return "";
-        else
-            return items.get(name).toString();
+        Object o = items.get(name);
+        return (o == null ? "" : (String) o);
     }
 
     @Override

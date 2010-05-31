@@ -56,7 +56,7 @@ public class JSONAttribute extends JSON {
      * <p>
      * The input string, held by the String object "input" variable is shared
      * by all JSON subclasses (static). Note that the index of parsing is also
-     * shared by all JSON child classes. If the JS String is round with a
+     * shared by all JSON child classes. If the JS String is rounded with a
      * valid pair of quotes, they are changed with DBLQUOTE.
      * If the string is empty, the method returns null.<br />
      * </p>
@@ -152,13 +152,6 @@ public class JSONAttribute extends JSON {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Print JSON Array.
-     * <p>
-     * This method calls all toString() method in a cascade manner.
-     * </p>
-     * @return the chunk string matched with this object.
-     */
     @Override
     public final String toString() {
         throw new UnsupportedOperationException("Not supported yet.");
