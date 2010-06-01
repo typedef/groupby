@@ -5,6 +5,8 @@
 
 package org.groupby.parser.json;
 
+import org.groupby.parser.JSON.JSON;
+
 /**
  *
  * @author stephane
@@ -29,7 +31,7 @@ public class Main {
                 "   \"\\tTOTAL\": \"I am \\\"a \\/test\", " +
                 "   \"demo\": 55.23" +
                 "}";*/
-        sx = "{\"A\": 545}";
+        //sx = "{\"A\": 545}";
 
 //  JSONArray with simple JSONObject
         //sx =
@@ -55,19 +57,20 @@ public class Main {
         //sx =
           //      "[[{\"row\": \"r2\"}, [{\"x\": 9898}]]]";
 
-       /* try {
+        sx = "{\"title\":\"some title\",\"sling:resourceType\":\"foo/bar\",\"jcr:primaryType\":\"nt:unstructured\"}";
+       try {
             JSON o = null;
             Object j = null ;
             
             for (int i=0; i < 1; i++) {
                 j = (JSONObject) JSON.parse(sx);
-                //System.out.println(" origin : " + i + " = " + sx);
-                //System.out.println(" result : " + i + " = " + j.toString());
+                System.out.println(" origin : " + i + " = " + sx);
+                System.out.println(" result : " + i + " = " + j.toString());
                 
             }
         } catch (JSONParsingException ex) {
             System.out.println(ex.getLocalizedMessage());
-        }*/
+        }
 
         /*long xl = 589754565465L;
         int xi = 65465;
@@ -88,7 +91,7 @@ public class Main {
             System.out.println( "Xnull = " +  nxn);
         }*/
 
-        Long xl = 589754565465L;
+        /*Long xl = 589754565465L;
         Integer xi = 65465;
         Double xd = 65455465.56588D;
         Object xn = null;
@@ -105,7 +108,7 @@ public class Main {
 
             Object nxn = (xn == null ? null : xn);
             System.out.println( "Xnull = " +  nxn);
-        }
+        }*/
 
     }
 
