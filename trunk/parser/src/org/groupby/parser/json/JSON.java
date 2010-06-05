@@ -1,8 +1,8 @@
 /*
-* Copyright (c) 2010, GroupBy foundation
+* Copyright (c) 2010, GroupBy.org foundation
 * All rights reserved.
 *
-* author : members@groupby.org
+* author : stephane@groupby.org
 *
 * - Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -13,7 +13,7 @@
 * - Redistributions in binary form must reproduce the above copyright notice,
 * this list of conditions and the following disclaimer in the documentation
 * and/or other materials provided with the distribution.
-* Neither the name of the Swiss information Group nor the names of its
+* Neither the name of the GroupBy.org nor the names of its
 * contributors may be used to endorse or promote products derived from this
 * software without specific prior written permission.
 *
@@ -91,48 +91,53 @@ import org.groupby.parser.json.JSONString;
  */
 public abstract class JSON {
 
-    // useful constants for parsing
-    protected final static char SPACE = ' ';
-    protected final static char ANTISLASH = '\\';
-    protected final static char UNICODE = 'u';
+    /**
+     * useful constants for parsing
+     */
+    public final static char SPACE = ' ';
+    public final static char ANTISLASH = '\\';
+    public final static char UNICODE = 'u';
+
+    public final static char OPEN_BRACKET = '[';
+    public final static char OPEN_BRACE = '{';
+    public final static char DBLQUOTE = '"';
+    public final static char QUOTE = '\'';
+
+    public final static char CLOSE_BRACKET = ']';
+    public final static char CLOSE_BRACE = '}';
+
+    public final static char SEPARATOR_FLOATING = '.';
+    public final static char SEPARATOR_ATTRIBUTE = ':';
+    public final static char SEPARATOR_LIST = ',';
+    public final static String SEPARATOR_ATTRIBUTE_SPACE = ": ";
+    public final static String SEPARATOR_LIST_SPACE = ", ";
+
+    public final static char MINUS = '-';
+    public final static char EXPMIN = 'e';
     
-    protected final static char OPEN_BRACKET = '[';
-    protected final static char OPEN_BRACE = '{';
-    protected final static char DBLQUOTE = '"';
-    protected final static char QUOTE = '\'';
-
-    protected final static char CLOSE_BRACKET = ']';
-    protected final static char CLOSE_BRACE = '}';
-
-    protected final static char SEPARATOR_FLOATING = '.';
-    protected final static char SEPARATOR_ATTRIBUTE = ':';
-    protected final static char SEPARATOR_LIST = ',';
-    protected final static String SEPARATOR_ATTRIBUTE_SPACE = ": ";
-    protected final static String SEPARATOR_LIST_SPACE = ", ";
-
-    protected final static char MINUS = '-';
-    protected final static char EXPMIN = 'e';
+    /**
+     * Method for reading input string
+     * @param src the input string to parse
+     * @param idx the "cursor's" position, put 0 to begin a complete parsing
+     * @return JSON object
+     * @throws JSONParsingException
+     */
+    public abstract JSON read(String src, int idx) throws JSONParsingException;
 
     /**
      * Method for reading input string
-     * @return the JSON object
+     * @param src the input string to parse
+     * @return JSON object
      * @throws JSONParsingException
      */
-    protected abstract JSON read() throws JSONParsingException;
-    
+    public abstract JSON read(String src) throws JSONParsingException;
+
     /**
      * Append string output to a stringBuffer.
      * @param s the stringBuffer.
      */
-    public abstract void toBuffer(StringBuffer s);
+    protected abstract void toBuffer(StringBuffer s);
     
-    // parser's static variables
-    public static String input = "";
-    public static int length = 0;
-    public static char c = SPACE;
-    public static int k = 0;
-    public static int ascii = 0;
-
     /**
      * Parse an input stream and build a JSON object.
      * <p>
@@ -147,28 +152,25 @@ public abstract class JSON {
      * @param src The input string top parse
      * @return a JSON object representing the entire string.
      * @throws JSONParsingException If the string is not correctly wrote.
-     * @see #read()
+     * @see #read(String)
      * @see #toString()
      */
-    public final static JSON parse(String src) throws JSONParsingException  {
-        clear();
-        input = src;
-        length = input.length();
+    public static JSON parse(String src) throws JSONParsingException  {
+        char c;
+        int k = 0;
         while (true) {
-            c = input.charAt(k);
+            c = src.charAt(k);
             // initial switch
             //  JSON object
             if(c == OPEN_BRACKET) {
-                k++;
-                return new JSONArray(true);
+                return new JSONArray().read(src, k);
             // JSON array
             } else if(c == OPEN_BRACE) {
-                k++;
-                return new JSONObject(true);
+                return new JSONObject().read(src, k);
             // simple JSON string
-            } else if(c == DBLQUOTE) {
+            } else if(c == DBLQUOTE || c == QUOTE) {
                 k++;
-                return new JSONString(true);
+                return new JSONString().read(src, k);
             // unexpected character found
             } else {
                 if((int) c > 32) {
@@ -178,21 +180,4 @@ public abstract class JSON {
             }
         }
     }
-
-    /**
-     * Reset all vars.
-     * <p>
-     * This method is call by the parse method. This class is static, it is
-     * necessary to clear those variables before each parsing.
-     * </p>
-     * @see #parse(java.lang.String src)
-     */
-    public static void clear() {
-        input = "";
-        length = 0;
-        c = SPACE;
-        k = 0;
-        ascii = 0;
-    }
-
 }

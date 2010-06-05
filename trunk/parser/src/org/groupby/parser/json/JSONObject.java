@@ -1,8 +1,8 @@
 /*
-* Copyright (c) 2010, GroupBy foundation
+* Copyright (c) 2010, GroupBy.org foundation
 * All rights reserved.
 *
-* author : members@groupby.org
+* author : stephane@groupby.org
 *
 * - Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -13,7 +13,7 @@
 * - Redistributions in binary form must reproduce the above copyright notice,
 * this list of conditions and the following disclaimer in the documentation
 * and/or other materials provided with the distribution.
-* Neither the name of the Swiss information Group nor the names of its
+* Neither the name of the GroupBy.org nor the names of its
 * contributors may be used to endorse or promote products derived from this
 * software without specific prior written permission.
 *
@@ -52,20 +52,13 @@ public class JSONObject extends JSON {
     // hold json object
     protected LinkedHashMap<String, Object> items = new LinkedHashMap<String, Object>();
 
+    public int k = 0;
+    private JSONAttribute jat;
+
     /**
      * JSONObject Constructor
      */
     public JSONObject() {
-    }
-
-    /**
-     * Create JSONObject and start reading input string
-     * @param b indicates whether start reading or not
-     * @throws JSONParsingException
-     */
-    public JSONObject(boolean b) throws JSONParsingException {
-        if (b)
-            read();
     }
 
     /**
@@ -80,29 +73,45 @@ public class JSONObject extends JSON {
     }
 
     /**
+     * Read the input string
+     * @param src
+     * @return
+     * @throws JSONParsingException
+     * @see #read(java.lang.String src, int)
+     */
+    @Override
+    public JSON read(String src) throws JSONParsingException {
+        return read(src, 0);
+    }
+
+    /**
      * Read a chunk of the input string, match JSON Object rules.
      * <p>
-     * The input string, held by the String object "input" variable is shared
-     * by all JSON subclasses (static). Note that the index of parsing is also
-     * shared by all JSON child classes.
      * If the string is empty, the method returns null.<br />
      * </p>
+     * @param src the input string to parse
+     * @param idx the "cursor's" position, put 0 to begin a complete parsing
      * @return a JSON Object representing a part of the input string.
      * @throws JSONParsingException if the string is not correctly wrote.
      * @see #parse(java.lang.String src)
-     */ 
+     */
     @Override
-    protected JSONObject read() throws JSONParsingException {
+    public JSONObject read(String src, int idx) throws JSONParsingException {
+        char c;
+        int length = src.length();
+        k = idx;
         while (k < length) {
-            c = input.charAt(k);
-            // expected string only
-            if(c == DBLQUOTE || c == QUOTE) {
+            c = src.charAt(k);
+            // expected attribute only
+            if (c == DBLQUOTE || c == QUOTE) {
                 k++;
-                put(new JSONAttribute().read());
+                jat = new JSONAttribute();
+                put(jat.read(src, k));
+                k = jat.k;
             } else if(c == CLOSE_BRACE) {
                 k++;
                 break;
-            } else if(c == SEPARATOR_LIST) {
+            } else if(c == OPEN_BRACE || c == SEPARATOR_LIST) {
                 k++;
             } else if((int) c > 32) {
                 throw new JSONParsingException("Invalid input JSON string. Expected character: " + DBLQUOTE + CLOSE_BRACE + SEPARATOR_LIST + " found: " + c, k);
@@ -166,42 +175,42 @@ public class JSONObject extends JSON {
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
-    public final Boolean getBoolean(String name) {
+    public final boolean getBoolean(String name) {
         Boolean b = (Boolean) items.get(name);
         return (b == null ? false : b);
     }
 
      /**
-     * Get an Integer with the key name
+     * Get an int with the key name
      *
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
-    public final Integer getInt(String name) {
-        Object o = items.get(name);
-        return (o == null ? 0 : (Integer) o);
+    public final int getInt(String name) {
+        Number o = (Number) items.get(name);
+        return (o == null ? 0 : o.intValue());
     }
 
       /**
-     * Get a Double with the key name
+     * Get a double with the key name
      *
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
-    public final Double getDouble(String name) {
-        Object o = items.get(name);
-        return (o == null ? 0D : (Double) o);
+    public final double getDouble(String name) {
+        Number o = (Number) items.get(name);
+        return (o == null ? 0 : o.doubleValue());
     }
 
      /**
-     * Get an Long with the key name
+     * Get an long with the key name
      *
      * @param name The key string
      * @return the Object linked to the key name. Never returns null.
      */
     public final Long getLong(String name) {
-        Object o = items.get(name);
-        return (o == null ? 0L : (Long) o);
+        Number o = (Number) items.get(name);
+        return (o == null ? 0 : o.longValue());
     }
 
      /**
@@ -211,12 +220,12 @@ public class JSONObject extends JSON {
      * @return the Object linked to the key name. Never returns null.
      */
     public final String getString(String name) {
-        Object o = items.get(name);
-        return (o == null ? "" : (String) o);
+        String o = (String) items.get(name);
+        return (o == null ? "" : (String) items.get(name));
     }
 
     @Override
-    public void toBuffer(StringBuffer s) {
+    protected void toBuffer(StringBuffer s) {
         s.append(OPEN_BRACE);
         boolean start = true;
         for (Iterator<String> iter = items.keySet().iterator(); iter.hasNext(); ) {
@@ -248,4 +257,5 @@ public class JSONObject extends JSON {
         toBuffer(s);
         return s.toString();
     }
+
 }

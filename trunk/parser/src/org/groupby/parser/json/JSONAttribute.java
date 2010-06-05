@@ -1,8 +1,8 @@
 /*
-* Copyright (c) 2010, GroupBy foundation
+* Copyright (c) 2010, GroupBy.org foundation
 * All rights reserved.
 *
-* author : members@groupby.org
+* author : stephane@groupby.org
 *
 * - Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -13,7 +13,7 @@
 * - Redistributions in binary form must reproduce the above copyright notice,
 * this list of conditions and the following disclaimer in the documentation
 * and/or other materials provided with the distribution.
-* Neither the name of the Swiss information Group nor the names of its
+* Neither the name of the GroupBy.org nor the names of its
 * contributors may be used to endorse or promote products derived from this
 * software without specific prior written permission.
 *
@@ -50,34 +50,53 @@ public class JSONAttribute extends JSON {
     protected String name = null;
     protected Object value = null;
     private String tmp = "";
+    public int k = 0;
+    private JSONArray ja;
+    private JSONObject jo;    
 
+    /**
+     * Read the input string
+     * @param src
+     * @return
+     * @throws JSONParsingException
+     * @see #read(java.lang.String src, int)
+     */
+    @Override
+    public JSON read(String src) throws JSONParsingException {
+        return read(src, 0);
+    }
+    
     /**
      * Read a chunk of the input string, matches JSON Attribute rules.
      * <p>
-     * The input string, held by the String object "input" variable is shared
-     * by all JSON subclasses (static). Note that the index of parsing is also
-     * shared by all JSON child classes. If the JS String is rounded with a
-     * valid pair of quotes, they are changed with DBLQUOTE.
-     * If the string is empty, the method returns null.<br />
+     * If the JS String is rounded with a valid pair of quotes,
+     * they are changed with DBLQUOTE. If the string is empty, the method
+     * returns null.<br />
      * </p>
+     * @param src the input string to parse
+     * @param idx the "cursor's" position, put 0 to begin a complete parsing
      * @return a JSON Attribute representing a part of the input string.
      * @throws JSONParsingException if the string is not correctly wrote.
      * @see #parse(java.lang.String src)
      */
     @Override
-    protected JSONAttribute read() throws JSONParsingException {
-        int currentPos = k;
+    public JSONAttribute read(String src, int idx) throws JSONParsingException {
+        int currentPos = idx;
+        int ascii;
+        char c;
+        int length = src.length();
+
         try {
             // attribute name
-            k = input.indexOf(DBLQUOTE, currentPos);
-            name = input.substring(currentPos, k);
+            k = src.indexOf(DBLQUOTE, currentPos);
+            name = src.substring(currentPos, k);
             // separator
             k++;
-            k = input.indexOf(SEPARATOR_ATTRIBUTE, k);
+            k = src.indexOf(SEPARATOR_ATTRIBUTE, k);
             // attribute value
             k++;
             while(k < length) {
-                c = input.charAt(k);
+                c = src.charAt(k);
                 ascii = (int) c;
 
                 if (c == DBLQUOTE || c == QUOTE) {
@@ -85,32 +104,36 @@ public class JSONAttribute extends JSON {
                     k++;
                     currentPos = k;
                     while (k < length) {
-                        c = input.charAt(k);
+                        c = src.charAt(k);
                         // expected end string
                         if (c == DBLQUOTE || c == QUOTE) {
                             k++;
                             break;
                         } else if (c == ANTISLASH) {
                             k++;
-                            c = input.charAt(k);
+                            c = src.charAt(idx);
                             if (c == UNICODE)
                                 k += 3;
                         }
                         k++;
                     }
-                    value = input.substring(currentPos, k-1);
+                    value = src.substring(currentPos, k-1);
                     break;
 
                 } else if (c == OPEN_BRACE) {
                 // jsonobject expected
                     k++;
-                    value = new JSONObject().read();
+                    jo = new JSONObject();
+                    value = jo.read(src, k);
+                    k = jo.k;
                     break;
 
                 } else if (c == OPEN_BRACKET) {
                 // jsonarray expected
                     k++;
-                    value = new JSONArray().read();
+                    ja = new JSONArray();
+                    value = ja.read(src, k);
+                    k = ja.k;
                     break;
 
                 } else if (ascii > 32) {
@@ -118,13 +141,13 @@ public class JSONAttribute extends JSON {
                     currentPos = k;
                     k++;
                     while (k < length) {
-                        c = input.charAt(k);
+                        c = src.charAt(k);
                         if (c == SEPARATOR_LIST || c == CLOSE_BRACE || c == CLOSE_BRACKET) {
-                            tmp = input.substring(currentPos, k).toLowerCase();
+                            tmp = src.substring(currentPos, k).toLowerCase();
                             if (tmp.indexOf("true") > -1)
                                 value = true;
                             else if (tmp.indexOf("false") > -1)
-                                value = false;                            
+                                value = false;
                             else if (tmp.indexOf("null") > -1)
                                 value = null;
                             else if (tmp.indexOf(EXPMIN) == -1 && tmp.indexOf(SEPARATOR_FLOATING) == -1)
@@ -143,7 +166,7 @@ public class JSONAttribute extends JSON {
         } catch (Exception ex) {
             throw new JSONParsingException("Invalid input JSON string. " + ex.getCause() + " " + ex.getMessage() , k);
         }
-        
+
         return this;
     }
 

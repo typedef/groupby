@@ -19,45 +19,37 @@ public class Main {
     public static void main(String[] args) {
 
         String sx ;
-
-
-
-// simple JSONobject
-                /* sx =
+        sx =
                 "{" +
                 "   \"unicode\": \"x\u0029x\", " +
                 "   \"haha\": '\"test', " +
                 "   \"f\": \"test\", " +
                 "   \"\\tTOTAL\": \"I am \\\"a \\/test\", " +
                 "   \"demo\": 55.23" +
-                "}";*/
-        //sx = "{\"A\": 545}";
+                "}";
 
-//  JSONArray with simple JSONObject
-        //sx =
-        //       "[{\"record\": 987, \"name\": \"Community\"}]";
-        //       01234567890123456789012345678901234567890123   44 bytes before escape (index from 0 to 43)
-        //                                                      38 bytes after
+        //  JSONArray with simple JSONObject
+        sx = "[{\"record\": 987, \"name\": \"Community\"}]";
 
+        //  JSONArray with simple JSONObject 3 items
+        sx = "[ {\"record\": 1    , \"name\": \"test\"},    {\"record\": 987, \"name\": \"Community\"}, {\"record\": 999, \"name\": \"Group\"}]";
 
-//  JSONArray with simple JSONObject 3 items
-//        sx =
-//                "[ {\"record\": 1    , \"name\": \"test\"},    {\"record\": 987, \"name\": \"Community\"}, {\"record\": 999, \"name\": \"Group\"}]";
-
-//  JSONArray with simple 3 JSONObject imbricated
-//        sx =
-//                "[{\"record\": 1, \"name\": {\"row\": {\"col\": \"colNAME\"}}}]";
+        //  JSONArray with simple 3 JSONObject imbricated
+        sx = "{\"record\": 1, \"name\": {\"row\": {\"col\": \"colNAME\"}}}";
 
 
-//  JSONArray with JSONObject with a JSONArray imbricated (contains 2 JSONObject)
-        //sx =
-         //       "[{\"record\": 1, \"name\": [{\"row\": \"r1\"}, {\"row\": \"r2\"}] }]";
+        //  JSONArray with JSONObject with a JSONArray imbricated (contains 2 JSONObject)
+        sx = "[{\"record\": 1, \"name\": [{\"row\": \"r1\"}, {\"row\": \"r2\"}] }]";
 
-//  JSONArray 3
-        //sx =
-          //      "[[{\"row\": \"r2\"}, [{\"x\": 9898}]]]";
+        //  JSONArray 3
+        sx = "[[{\"row\": \"r2\"}, [{\"x\": 9898}]]]";
 
-        sx = "{\"title\":\"some title\",\"sling:resourceType\":\"foo/bar\",\"jcr:primaryType\":\"nt:unstructured\"}";
+        // others tests
+        sx = "{\"title\":\"some title\",\"sling:resourceType\":\"foo/bar\",\"jcr:primaryType\":\"nt:unstructured\", , \"name\": {\"row\": {\"col\": \"colNAME\"}}}";
+        sx = "{\"mykey\": \"value\", \"mykey2\": \"value2\"}";
+        sx = "{\"title\": \"some title\", \"sling:resourceType\": \"foo/bar\", \"jcr:primaryType\": \"nt:unstructured\", \"jsonobjecthere\": {\"row\": 1}}";
+        sx = "{\"title\": [{\"row\": 1}, {\"row\": 2}]}";
+
        try {
             JSON o = null;
             Object j = null ;

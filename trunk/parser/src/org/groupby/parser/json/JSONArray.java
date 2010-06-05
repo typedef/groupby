@@ -1,8 +1,8 @@
 /*
-* Copyright (c) 2010, GroupBy foundation
+* Copyright (c) 2010, GroupBy.org foundation
 * All rights reserved.
 *
-* author : members@groupby.org
+* author : stephane@groupby.org
 *
 * - Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -13,7 +13,7 @@
 * - Redistributions in binary form must reproduce the above copyright notice,
 * this list of conditions and the following disclaimer in the documentation
 * and/or other materials provided with the distribution.
-* Neither the name of the Swiss information Group nor the names of its
+* Neither the name of the GroupBy.org nor the names of its
 * contributors may be used to endorse or promote products derived from this
 * software without specific prior written permission.
 *
@@ -51,6 +51,10 @@ public class JSONArray extends JSON {
     // hold json array
     protected ArrayList<Object> items = new ArrayList();
 
+    public int k = 0;
+    private JSONArray ja;
+    private JSONObject jo;
+    
     /**
      * JSONArray Constructor
      */
@@ -58,44 +62,54 @@ public class JSONArray extends JSON {
     }
 
     /**
-     * Create JSONArray and start reading input string
-     * @param b indicates whether start reading or not
+     * Read the input string
+     * @param src
+     * @return
      * @throws JSONParsingException
+     * @see #read(java.lang.String src, int)
      */
-    public JSONArray(boolean b) throws JSONParsingException {
-        if (b)
-            read();
+    @Override
+    public JSON read(String src) throws JSONParsingException {
+        return read(src, 0);
     }
 
     /**
      * Read a chunk of the input string, match JSON Array rules.
      * <p>
-     * The input string, held by the String object "input" variable is shared
-     * by all JSON subclasses (static). Note that the index of parsing is also
-     * shared by all JSON child classes.
      * If the string is empty, the method returns null.<br />
      * </p>
+     * @param src the input string to parse
+     * @param idx the "cursor's" position, put 0 to begin a complete parsing
      * @return a JSON Array representing a part of the input string.
      * @throws JSONParsingException if the string is not correctly wrote.
      * @see #parse(java.lang.String src)
      */    
     @Override
-    protected JSONArray read() throws JSONParsingException {
-
+    public JSONArray read(String src, int idx) throws JSONParsingException {
+        boolean start = true;
+        char c;
+        int length = src.length();
+        k = idx;
         while (k < length) {
-
-            c = input.charAt(k);
-
+            c = src.charAt(k);
             // expected jsonobject
             if(c == OPEN_BRACE) {
                 k++;
-                items.add(new JSONObject().read());
+                jo = new JSONObject();
+                items.add(jo.read(src, k));
+                k = jo.k;
             } else if(c == SEPARATOR_LIST || c == CLOSE_BRACKET || c == CLOSE_BRACE) {
                 k++;
             } else if(c == OPEN_BRACKET) {
-            // expected jsonarray
                 k++;
-                items.add(new JSONArray().read());
+                if (start) {
+                    start = false;
+                } else {
+                    // expected jsonarray
+                    ja = new JSONArray();
+                    items.add(ja.read(src, k));
+                    k = ja.k;
+                }
             } else if((int) c > 32) {
                 throw new JSONParsingException("Invalid input JSON string. Expected character: " + DBLQUOTE + " found: " + c, k);
             } else k++;
@@ -146,47 +160,47 @@ public class JSONArray extends JSON {
     }
 
      /**
-     * Get a Boolean with the index
+     * Get a boolean with the index
      *
      * @param i The index
      * @return the Object linked to the key name. Never returns null.
      */
-    public final Boolean getBoolean(int i) {
+    public final boolean getBoolean(int i) {
         Boolean b = (Boolean) items.get(i);
         return (b == null ? false : b);
     }
 
      /**
-     * Get a Integer with the index
+     * Get a int with the index
      *
      * @param i The index
      * @return the Object linked to the key name. Never returns null.
      */
-    public final Integer getInt(int i) {
-        Object o = items.get(i);
-        return (o == null ? 0 : (Integer) o);
+    public final int getInt(int i) {
+        Number o = (Number) items.get(i);
+        return (o == null ? 0 : o.intValue());
     }
 
      /**
-     * Get a Double with the index
+     * Get a double with the index
      *
      * @param i The index
      * @return the Object linked to the key name. Never returns null.
      */
-    public final Double getDouble(int i) {
-        Object o = items.get(i);
-        return (o == null ? 0D : (Double) o);
+    public final double getDouble(int i) {
+        Number o = (Number) items.get(i);
+        return (o == null ? 0 : o.doubleValue());
     }
 
      /**
-     * Get a Long with the index
+     * Get a long with the index
      *
      * @param i The index
      * @return the Object linked to the key name. Never returns null.
      */    
     public final Long getLong(int i) {
-        Object o = items.get(i);
-        return (o == null ? 0L : (Long) o);
+        Number o = (Number) items.get(i);
+        return (o == null ? 0 : o.longValue());
     }
 
      /**
@@ -205,7 +219,10 @@ public class JSONArray extends JSON {
     public void toBuffer(StringBuffer s) {
         s.append(OPEN_BRACKET);
         for (int i = 0;i < items.size(); i++) {
-            if (i > 0) s.append(SEPARATOR_LIST);
+            if (i > 0) {
+                s.append(SEPARATOR_LIST);
+                s.append(SPACE);
+            }
             s.append(items.get(i).toString());
         }
         s.append(CLOSE_BRACKET);
@@ -224,4 +241,5 @@ public class JSONArray extends JSON {
         toBuffer(s);
         return s.toString();
     }
+
 }

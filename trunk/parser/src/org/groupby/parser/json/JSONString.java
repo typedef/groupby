@@ -1,8 +1,8 @@
 /*
-* Copyright (c) 2010, GroupBy foundation
+* Copyright (c) 2010, GroupBy.org foundation
 * All rights reserved.
 *
-* author : members@groupby.org
+* author : stephane@groupby.org
 *
 * - Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -13,7 +13,7 @@
 * - Redistributions in binary form must reproduce the above copyright notice,
 * this list of conditions and the following disclaimer in the documentation
 * and/or other materials provided with the distribution.
-* Neither the name of the Swiss information Group nor the names of its
+* Neither the name of the GroupBy.org nor the names of its
 * contributors may be used to endorse or promote products derived from this
 * software without specific prior written permission.
 *
@@ -50,21 +50,23 @@ public class JSONString extends JSON {
 
     // hold json string object
     protected String value = new String();
-    
+
     /**
-     * JSONObject Constructor
+     * JSONString Constructor
      */
     public JSONString() {
     }
 
     /**
-     * Create JSONString and start reading input string
-     * @param b indicates whether start reading or not
+     * Read the input string
+     * @param src
+     * @return
      * @throws JSONParsingException
+     * @see #read(java.lang.String src, int)
      */
-    public JSONString(boolean b) throws JSONParsingException {
-        if (b)
-            read();
+    @Override
+    public JSON read(String src) throws JSONParsingException {
+        return read(src, 0);
     }
 
     /**
@@ -80,8 +82,8 @@ public class JSONString extends JSON {
      * @see #parse(java.lang.String src)
      */
     @Override
-    protected JSONString read() throws JSONParsingException {
-        value = input.substring(k, length);
+    public JSONString read(String src, int idx) throws JSONParsingException {
+        value = src.substring(idx, src.length());
         return this;
     }
 
